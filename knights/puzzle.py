@@ -13,6 +13,10 @@ CKnave = Symbol("C is a Knave")
 # A says "I am both a knight and a knave."
 knowledge0 = And(
     # TODO
+    Or(AKnight, AKnave),
+    Not(And(AKnight, AKnave)),
+    Implication(AKnight, And(AKnight, AKnave)),
+    Implication(AKnave, Not(And(AKnight, AKnave)))
 )
 
 # Puzzle 1
@@ -20,6 +24,12 @@ knowledge0 = And(
 # B says nothing.
 knowledge1 = And(
     # TODO
+    Or(AKnight, AKnave),
+    Or(BKnight, BKnave),
+    Not(And(AKnight, AKnave)),
+    Not(And(BKnight, BKnave)),
+    Implication(AKnight, And(AKnave, BKnave)),
+    Implication(AKnave, Not(And(AKnave, BKnave)))
 )
 
 # Puzzle 2
@@ -27,6 +37,14 @@ knowledge1 = And(
 # B says "We are of different kinds."
 knowledge2 = And(
     # TODO
+    Or(AKnight, AKnave),
+    Or(BKnight, BKnave),
+    Not(And(AKnight, AKnave)),
+    Not(And(BKnight, BKnave)),
+    Implication(AKnight, And(Biconditional(AKnight, BKnight), Biconditional(AKnave, BKnave))),
+    Implication(AKnave, Not(And(Biconditional(AKnight, BKnight), Biconditional(AKnave, BKnave)))),
+    Implication(BKnight, Not(And(Biconditional(BKnight, AKnight), Biconditional(BKnave, AKnave)))),
+    Implication(BKnave, And(Biconditional(BKnight, AKnight), Biconditional(BKnave, AKnave)))
 )
 
 # Puzzle 3
@@ -36,6 +54,20 @@ knowledge2 = And(
 # C says "A is a knight."
 knowledge3 = And(
     # TODO
+    Or(AKnight, AKnave),
+    Or(BKnight, BKnave),
+    Or(CKnight, CKnave),
+    Not(And(AKnight, AKnave)),
+    Not(And(BKnight, BKnave)),
+    Not(And(CKnight, CKnave)),
+    Implication(AKnight, Or(AKnight, AKnave)),
+    Implication(AKnave, Not(Or(AKnight, AKnave))),
+    Implication(BKnight, And(Implication(AKnight, AKnave), Implication(AKnave, Not(AKnave)))),
+    Implication(BKnave, Not(And(Implication(AKnight, AKnave), Implication(AKnave, Not(AKnave))))),
+    Implication(BKnight, And(Implication(CKnight, CKnave), Implication(CKnave, Not(CKnave)))),
+    Implication(BKnave, Not(And(Implication(CKnight, CKnave), Implication(CKnave, Not(CKnave))))),
+    Implication(CKnight, And(Implication(AKnight, AKnight), Implication(AKnave, Not(AKnight)))),
+    Implication(CKnave, Not(And(Implication(AKnight, AKnight), Implication(AKnave, Not(AKnight)))))
 )
 
 
