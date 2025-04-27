@@ -178,6 +178,7 @@ class MinesweeperAI():
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
 
+
     def add_knowledge(self, cell, count):
         """
         Called when the Minesweeper board tells us, for a given
@@ -220,12 +221,12 @@ class MinesweeperAI():
                         cells.add((i, j))
 
         # Add a new sentence to the knowledge base
-        new_sentence = Sentence(cells, mines_count)
-        self.knowledge.append(new_sentence)
+        new_sent = Sentence(cells, mines_count)
+        self.knowledge.append(new_sent)
 
         # Mark any additional cells as safe or as mines based on knowledge base
-        new_known_mines = list(new_sentence.known_mines())
-        new_known_safes = list(new_sentence.known_safes())
+        new_known_mines = list(new_sent.known_mines())
+        new_known_safes = list(new_sent.known_safes())
 
         for mine in new_known_mines:
             self.mark_mine(mine)
@@ -233,44 +234,28 @@ class MinesweeperAI():
         for safe in new_known_safes:
             self.mark_safe(safe)
 
-# The function should add a new sentence to the AI’s knowledge base,
-# based on the value of cell and count, to indicate that count of 
-# the cell’s neighbors are mines. Be sure to only include cells
-# whose state is still undetermined in the sentence.
-
-# If, based on any of the sentences in self.knowledge, 
-# new cells can be marked as safe or as mines, 
-# then the function should do so.
-
-# If, based on any of the sentences in self.knowledge, 
-# new sentences can be inferred (using the subset method described 
-# in the Background), then those sentences should be added to the 
-# knowledge base as well.
-
-# Note that any time that you make any change to your AI’s knowledge,
-#  it may be possible to draw new inferences that weren’t possible 
-# before. Be sure that those new inferences are added to the 
-# knowledge base if it is possible to do so.
+        new_sent = self.knowledge[-1]
         
         # Add new sentences to the knowledge base inferred from existing knowledge
+        self.add_info_subset(new_sent.cells, new_sent.count)
+        
+    
+    def add_info_subset(self, cells, count):
         knowledge_copy = list(self.knowledge)
-        for sent1 in knowledge_copy:
-            for sent2 in knowledge_copy:
-
-                if sent1 != sent2:
-                    if sent1.cells < sent2.cells:
-                        inf_sent = Sentence((sent2.cells-sent1.cells), (sent2.count-sent1.count))
-                        self.knowledge.append(inf_sent)
-
-                        inf_known_mines = list(inf_sent.known_mines())
-                        inf_known_safes = list(inf_sent.known_safes())
-
-                        for mine in inf_known_mines:
-                            self.mark_mine(mine)
-
-                        for safe in inf_known_safes:
-                            self.mark_safe(safe)
-
+        
+        for sentence in knowledge_copy:
+            if cells < sentence.cells or sentence.cells < cells:
+                new_cells = sentence.cells ^ cells
+                new_count = abs(sentence.count - count)
+                new_sent = Sentence(new_cells, new_count)
+                self.knowledge.append(new_sent)
+                known_mines = list(new_sent.known_mines())
+                known_safes = list(new_sent.known_safes())
+                for mine in known_mines:
+                    self.mark_mine(mine)
+                for safe in known_safes:
+                        self.mark_safe(safe)
+                
 
     def make_safe_move(self):
         """
